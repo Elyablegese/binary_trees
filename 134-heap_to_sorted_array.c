@@ -1,77 +1,53 @@
 #include "binary_trees.h"
 
 /**
- * bst_insert - inserts a value in a Binary Search Tree
- * @tree: a double pointer to the root node of the BST to insert the value
- * @value: the value to store in the node to be inserted
- * Return: A pointer to the created node
- *         NULL on failure
+ * tree_size - measures the sum of heights of a binary tree
+ * @tree: pointer to the root node of the tree to measure the height
+ *
+ * Return: Height or 0 if tree is NULL
  */
-bst_t *bst_insert(bst_t **tree, int value)
+size_t tree_size(const binary_tree_t *tree)
 {
-	bst_t *tmp = *tree;
-	bst_t *second = NULL;
-	bst_t *new = binary_tree_node(NULL, value);
+	size_t height_l = 0;
+	size_t height_r = 0;
 
-	if (*tree == NULL)
-		*tree = new;
+	if (!tree)
+		return (0);
 
-	while (tmp)
-	{
-		second = tmp;
-		if (value < tmp->n)
-			tmp = tmp->left;
-		else if (value > tmp->n)
-			tmp = tmp->right;
-		else if (value == tmp->n)
-			return (NULL);
-	}
+	if (tree->left)
+		height_l = 1 + tree_size(tree->left);
 
-	if (second == NULL)
-		second = new;
-	else if (value < second->n)
-	{
-		second->left = new;
-		new->parent = second;
-	}
-	else
-	{
-		second->right = new;
-		new->parent = second;
-	}
+	if (tree->right)
+		height_r = 1 + tree_size(tree->right);
 
-	return (new);
+	return (height_l + height_r);
 }
 
 /**
- * avl_insert - inserts a value in an AVL Tree
- * @tree: a double pointer to the root node of the AVL tree
- * @value: value to insert
+ * heap_to_sorted_array - converts a Binary Max Heap
+ * to a sorted array of integers
  *
- * Return: a pointer to the created node
- *         NULL on failure
- */
-avl_t *avl_insert(avl_t **tree, int value)
+ * @heap: pointer to the root node of the heap to convert
+ * @size: address to store the size of the array
+ *
+ * Return: pointer to array sorted in descending order
+ **/
+int *heap_to_sorted_array(heap_t *heap, size_t *size)
 {
-	int balance = 0;
-	avl_t *node = bst_insert(tree, value);
+	int i, *a = NULL;
 
-	balance = binary_tree_balance(*tree);
+	if (!heap || !size)
+		return (NULL);
 
-	if (balance > 1 && value < node->left->n)
-		return (binary_tree_rotate_right(node));
-	if (balance < -1 && value > node->right->n)
-		return (binary_tree_rotate_left(node));
-	if (balance > 1 && value > node->left->n)
-	{
-		node->left = binary_tree_rotate_left(node->left);
-		return (binary_tree_rotate_right(node));
-	}
-	if (balance < -1 && value < node->right->n)
-	{
-		node->right = binary_tree_rotate_right(node->right);
-		return (binary_tree_rotate_left(node));
-	}
+	*size = tree_size(heap) + 1;
 
-	return (node);
+	a = malloc(sizeof(int) * (*size));
+
+	if (!a)
+		return (NULL);
+
+	for (i = 0; heap; i++)
+		a[i] = heap_extract(&heap);
+
+	return (a);
 }
