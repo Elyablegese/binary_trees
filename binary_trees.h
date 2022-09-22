@@ -11,6 +11,21 @@
 #include <limits.h>
 
 /**
+ * enum avl_state_n - mneumonic for unique states when balancing AVL trees
+ * @AVL_RETURN: return to caller
+ * @AVL_CREATE: create and insert a node
+ * @AVL_CHILD_L: coming from child's left subtree
+ * @AVL_CHILD_R: coming from child's right subtree
+ */
+typedef enum avl_state_n
+{
+	AVL_RETURN = 0,
+	AVL_LCHILD,
+	AVL_RCHILD,
+	AVL_CREATE
+} avl_state_t;
+
+/**
  * struct binary_tree_s - Binary tree node
  *
  * @n: Integer stored in the node
